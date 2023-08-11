@@ -4,26 +4,36 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  useIonToast,
 } from '@ionic/react';
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
 import { EditableList } from '../components/editable-list/List';
 import { HeaderInput } from '../components/HeaderInput';
-import { ModalEditName } from '../components/modals/EditName';
+import { ModalEditRecipe } from '../components/modals/EditRecipe';
 import { RecipeItem } from '../components/RecipeItem';
-import { recipes } from '../fixtures';
+import {
+  useRecipeCollectionSnapshot,
+  useRecipeSet,
+} from '../modules/resources/recipes';
+import { slugify } from '../utils/slugify';
 
 interface Props
   extends RouteComponentProps<{
     id: string;
   }> {}
 
-export const Recipes: React.FC<Props> = ({ history }) => {
-  async function handleCreateRecipe(value: string) {}
-  function handleUpdateRecipe(item: (typeof recipes)[number]) {}
-  function handleDeleteRecipe(item: (typeof recipes)[number]) {}
+export const RecipeList: React.FC<Props> = () => {
+  const { data } = useRecipeCollectionSnapshot();
+  const { set } = useRecipeSet();
+
+  async function handleCreateRecipe(value: string) {
+    const name = value.trim();
+    const id = slugify(name);
+    await set(id, { name: value });
+  }
+
+  function handleUpdateRecipe(item: any) {}
 
   return (
     <IonPage>
@@ -38,10 +48,10 @@ export const Recipes: React.FC<Props> = ({ history }) => {
       </IonHeader>
       <IonContent fullscreen>
         <EditableList
-          data={recipes}
+          data={data || []}
           Item={RecipeItem}
-          Modal={ModalEditName}
-          onContextMenu={handleUpdateRecipe}
+          Modal={ModalEditRecipe}
+          onEdit={handleUpdateRecipe}
         />
       </IonContent>
     </IonPage>

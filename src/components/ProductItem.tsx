@@ -1,10 +1,10 @@
 import { IonItem, IonLabel, IonNote } from '@ionic/react';
 import React from 'react';
 
-import { recipes, shopping } from '../fixtures';
+import { Product } from '../modules/resources/products';
 
 interface Props {
-  item: (typeof shopping | typeof recipes)[number]['products'][number];
+  item: Product;
 }
 
 export const ProductItem: React.FC<Props> = ({ item }) => {

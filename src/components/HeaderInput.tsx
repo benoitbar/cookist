@@ -1,13 +1,12 @@
-import React from 'react';
 import {
   IonButton,
   IonButtons,
   IonIcon,
   IonInput,
-  IonItem,
   IonToolbar,
 } from '@ionic/react';
 import { add } from 'ionicons/icons';
+import React from 'react';
 
 import { KEYS } from '../utils/keys';
 

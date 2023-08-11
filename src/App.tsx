@@ -12,10 +12,10 @@ import {
 import { IonReactRouter } from '@ionic/react-router';
 import { list, restaurant, square } from 'ionicons/icons';
 
-import { Products } from './pages/Products';
-import { Recipe } from './pages/Recipe';
-import { Recipes } from './pages/Recipes';
-import { Shopping } from './pages/Shopping';
+import { RecipeDetail } from './pages/RecipeDetail';
+import { RecipeList } from './pages/RecipeList';
+import { ShoppingDetail } from './pages/ShoppingDetail';
+import { ShoppingList } from './pages/ShoppingList';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -43,10 +43,10 @@ const App: React.FC = () => (
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
-          <Route exact path="/shopping" component={Shopping} />
-          <Route exact path="/shopping/:id" component={Products} />
-          <Route exact path="/recipes" component={Recipes} />
-          <Route exact path="/recipes/:id" component={Recipe} />
+          <Route exact path="/shopping" component={ShoppingList} />
+          <Route exact path="/shopping/:id" component={ShoppingDetail} />
+          <Route exact path="/recipes" component={RecipeList} />
+          <Route exact path="/recipes/:id" component={RecipeDetail} />
           <Route exact path="/">
             <Redirect to="/shopping" />
           </Route>

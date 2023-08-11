@@ -8,13 +8,25 @@ import {
 
 import { EditableList } from '../components/editable-list/List';
 import { HeaderInput } from '../components/HeaderInput';
-import { ModalEditName } from '../components/modals/EditName';
+import { ModalEditShopping } from '../components/modals/EditShopping';
 import { ShoppingItem } from '../components/ShoppingItem';
-import { shopping } from '../fixtures';
+import {
+  useShoppingCollectionSnapshot,
+  useShoppingSet,
+} from '../modules/resources/shopping';
+import { slugify } from '../utils/slugify';
 
-export const Shopping: React.FC = () => {
-  async function handleCreateItem(value: string) {}
-  async function handleUpdateItem(item: (typeof shopping)[number]) {}
+export const ShoppingList: React.FC = () => {
+  const { data } = useShoppingCollectionSnapshot();
+  const { set } = useShoppingSet();
+
+  async function handleCreateItem(value: string) {
+    const name = value.trim();
+    const id = slugify(name);
+    await set(id, { name });
+  }
+
+  async function handleUpdateItem(item: any) {}
 
   return (
     <IonPage>
@@ -26,10 +38,10 @@ export const Shopping: React.FC = () => {
       </IonHeader>
       <IonContent fullscreen>
         <EditableList
-          data={shopping}
+          data={data || []}
           Item={ShoppingItem}
-          Modal={ModalEditName}
-          onContextMenu={handleUpdateItem}
+          Modal={ModalEditShopping}
+          onEdit={handleUpdateItem}
         />
       </IonContent>
     </IonPage>

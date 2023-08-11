@@ -1,36 +1,57 @@
 import {
-  IonBackButton,
   IonButton,
   IonButtons,
-  IonCol,
   IonContent,
-  IonGrid,
   IonHeader,
   IonIcon,
   IonInput,
-  IonItemGroup,
-  IonRow,
-  IonTextarea,
-  IonTitle,
   IonToolbar,
 } from '@ionic/react';
 import { arrowBack, trash } from 'ionicons/icons';
+import React from 'react';
 
-import { shopping } from '../../fixtures';
+import {
+  Shopping,
+  useShoppingRemove,
+  useShoppingUpdate,
+} from '../../modules/resources/shopping';
 import { KEYS } from '../../utils/keys';
 
 import './modal.css';
 
 interface Props {
-  item: (typeof shopping)[number];
+  item: Shopping;
   onDismiss: any;
 }
 
-export const ModalEditName: React.FC<Props> = ({ item, onDismiss }) => {
+export const ModalEditShopping: React.FC<Props> = ({ item, onDismiss }) => {
+  const { update } = useShoppingUpdate();
+  const { remove } = useShoppingRemove();
+
+  const [name, setName] = React.useState(item.name);
+
+  async function save() {
+    await update(item.id, { name });
+    onDismiss();
+  }
+
+  function handleChange(evt: any) {
+    setName(evt.target.value);
+  }
+
   function handleKeyUp(evt: React.KeyboardEvent<HTMLIonInputElement>) {
     if (evt.key === KEYS.ENTER) {
-      onDismiss(evt);
+      save();
     }
+  }
+
+  function handleClick(evt: React.MouseEvent<HTMLIonButtonElement>) {
+    save();
+  }
+
+  async function handleDelete(evt: React.MouseEvent<HTMLIonButtonElement>) {
+    await remove(item.id);
+    onDismiss();
   }
 
   return (
@@ -38,7 +59,7 @@ export const ModalEditName: React.FC<Props> = ({ item, onDismiss }) => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonButton onClick={onDismiss}>
+            <IonButton onClick={handleClick}>
               <IonIcon slot="icon-only" icon={arrowBack} />
             </IonButton>
           </IonButtons>
@@ -50,13 +71,14 @@ export const ModalEditName: React.FC<Props> = ({ item, onDismiss }) => {
           fill="outline"
           label="Nom"
           labelPlacement="stacked"
+          onIonChange={handleChange}
           onKeyUp={handleKeyUp}
           required
-          value={item.name}
+          value={name}
         />
         <IonToolbar>
           <IonButtons slot="end">
-            <IonButton color="danger">
+            <IonButton color="danger" onClick={handleDelete}>
               Supprimer
               <IonIcon icon={trash} slot="end"></IonIcon>
             </IonButton>

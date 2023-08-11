@@ -6,7 +6,7 @@ interface Props<T> {
   children: React.ReactElement;
   item: T;
   Modal: any;
-  onContextMenu: (item: T) => void;
+  onEdit: (item: T, data: T) => void;
   onSwipe?: (item: T) => void;
 }
 
@@ -22,15 +22,15 @@ export const EditableListItem: React.FC<Props<any>> = <T,>({
   children,
   item,
   Modal,
-  onContextMenu,
+  onEdit,
   onSwipe,
 }: Props<T>) => {
   const itemRef = React.useRef<any>();
 
   const [present, dismiss] = useIonModal(Modal, {
     item,
-    onDismiss: () => {
-      onContextMenu(item);
+    onDismiss: (data: T) => {
+      onEdit(item, data);
       dismiss();
     },
   });

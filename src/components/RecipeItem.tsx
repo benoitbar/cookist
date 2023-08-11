@@ -10,10 +10,10 @@ import { cart } from 'ionicons/icons';
 import React from 'react';
 
 import { ModalChooseList } from '../components/modals/ChooseList';
-import { recipes } from '../fixtures';
+import { Recipe } from '../modules/resources/recipes';
 
 interface Props {
-  item: (typeof recipes)[number];
+  item: Recipe;
 }
 
 export const RecipeItem: React.FC<Props> = ({ item }) => {

@@ -8,7 +8,7 @@ interface Props<T> {
   getKey?: (item: T) => React.Key;
   Item: any;
   Modal: any;
-  onContextMenu: (item: T) => void;
+  onEdit: (item: T, data: T) => void;
   onSwipe?: (item: T) => void;
 }
 
@@ -18,7 +18,7 @@ export const EditableList: React.FC<Props<any>> = <T,>({
   Item,
   Modal,
   onSwipe,
-  onContextMenu,
+  onEdit,
 }: Props<T>) => {
   return (
     <IonList className="ion-no-padding" lines="full">
@@ -27,7 +27,7 @@ export const EditableList: React.FC<Props<any>> = <T,>({
           item={item}
           key={getKey(item)}
           Modal={Modal}
-          onContextMenu={onContextMenu}
+          onEdit={onEdit}
           onSwipe={onSwipe}
         >
           <Item item={item} />

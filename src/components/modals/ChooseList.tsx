@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   IonButton,
   IonButtons,
@@ -6,9 +5,9 @@ import {
   IonContent,
   IonHeader,
   IonIcon,
+  IonInput,
   IonItem,
   IonItemDivider,
-  IonItemGroup,
   IonLabel,
   IonList,
   IonNote,
@@ -16,40 +15,88 @@ import {
   IonToolbar,
 } from '@ionic/react';
 import { close, list } from 'ionicons/icons';
-import { RouteComponentProps } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
-import { recipes, shopping } from '../../fixtures';
+import { Recipe } from '../../modules/resources/recipes';
+import {
+  Shopping,
+  useShoppingCollectionSnapshot,
+} from '../../modules/resources/shopping';
+import { extractUnit } from '../../utils/quantity';
 
+import './ChooseList.css';
 import './modal.css';
+import {
+  Product,
+  useProductCollectionSnapshot,
+  useProductSet,
+} from '../../modules/resources/products';
 
 interface Props {
-  history: RouteComponentProps['history'];
-  recipe: (typeof recipes)[number];
+  recipe: Recipe;
   onDismiss: () => void;
 }
 
-export const ModalChooseList: React.FC<Props> = ({
-  history,
-  recipe,
-  onDismiss,
-}) => {
-  const [checked, setChecked] = useState(
-    recipe.products.map(product => product.id)
-  );
+export const ModalChooseList: React.FC<Props> = ({ recipe, onDismiss }) => {
+  // TODO: no need to use snapshots here
+  const { data: shoppingList } = useShoppingCollectionSnapshot();
+  const { data: productList } = useProductCollectionSnapshot(recipe.ref);
 
-  function handleChange(evt: any) {
+  const { set } = useProductSet();
+
+  const [unit, setUnit] = useState<number>(recipe.unit);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [checked, setChecked] = useState<string[] | void>();
+
+  function handleCheckboxChange(evt: any) {
     if (evt.detail.checked) {
-      setChecked(prevState => [...prevState, evt.detail.value]);
+      setChecked(prevState =>
+        prevState ? [...prevState, evt.detail.value] : [evt.detail.value]
+      );
     } else {
       setChecked(prevState =>
-        prevState.filter(item => item !== evt.detail.value)
+        prevState
+          ? prevState.filter(item => item !== evt.detail.value)
+          : prevState
       );
     }
   }
 
-  function handleAddToList(item: (typeof shopping)[number]) {
+  function handleInputChange(evt: any) {
+    const value = evt.target.value;
+    setUnit(Number(value));
+  }
+
+  useEffect(() => {
+    if (productList) {
+      setProducts(
+        productList?.map(product => {
+          const { quantity, unit: productUnit } = extractUnit(product.quantity);
+          return {
+            ...product,
+            quantity: `${(quantity * unit) / recipe.unit}${productUnit}`,
+          };
+        })
+      );
+
+      if (!Array.isArray(checked)) {
+        setChecked(productList.map(item => item.name));
+      }
+    }
+  }, [productList, unit]);
+
+  async function handleAddToList(item: Shopping) {
+    if (Array.isArray(checked) && checked.length > 0) {
+      // TODO: update shopping products if already exist ?
+      await Promise.allSettled(
+        products
+          .filter(product => checked.includes(product.name))
+          .map(async product => {
+            await set({ ...product, parent: item.ref });
+          })
+      );
+    }
     onDismiss();
-    history.push('/recipes');
   }
 
   return (
@@ -64,13 +111,25 @@ export const ModalChooseList: React.FC<Props> = ({
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      {recipe.products.map(product => (
-        <IonItem key={product.id} lines="none">
+      <IonItem lines="none">
+        Pour{' '}
+        <IonInput
+          aria-label="Nombre de personnes"
+          className="unit"
+          onIonChange={handleInputChange}
+          min={1}
+          type="number"
+          value={unit}
+        />{' '}
+        personnes
+      </IonItem>
+      {products.map(product => (
+        <IonItem key={product.name} lines="none">
           <IonCheckbox
-            checked={checked.indexOf(product.id) > -1}
-            onIonChange={handleChange}
+            checked={!!checked && checked.indexOf(product.name) > -1}
+            onIonChange={handleCheckboxChange}
             slot="start"
-            value={product.id}
+            value={product.name}
           />
           <IonLabel>{product.name}</IonLabel>
           <IonNote slot="end">{product.quantity}</IonNote>
@@ -81,8 +140,12 @@ export const ModalChooseList: React.FC<Props> = ({
       </IonItemDivider>
       <IonContent>
         <IonList className="ion-no-padding" lines="full">
-          {shopping.map(item => (
-            <IonItem button key={item.id} onClick={() => handleAddToList(item)}>
+          {shoppingList?.map(item => (
+            <IonItem
+              button
+              key={item.name}
+              onClick={() => handleAddToList(item)}
+            >
               <IonIcon slot="start" icon={list} />
               <IonLabel>{item.name}</IonLabel>
             </IonItem>

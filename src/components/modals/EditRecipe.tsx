@@ -5,43 +5,58 @@ import {
   IonHeader,
   IonIcon,
   IonInput,
-  IonTextarea,
   IonToolbar,
 } from '@ionic/react';
 import { arrowBack, trash } from 'ionicons/icons';
 import React from 'react';
 
-import { Product } from '../../modules/resources/products';
+import {
+  Recipe,
+  useRecipeRemove,
+  useRecipeUpdate,
+} from '../../modules/resources/recipes';
 import { KEYS } from '../../utils/keys';
 
 import './modal.css';
 
 interface Props {
-  item: Product;
+  item: Recipe;
   onDismiss: any;
 }
 
-export const ModalEditProduct: React.FC<Props> = ({ item, onDismiss }) => {
-  const [product, setProduct] = React.useState<Product>(item);
+export const ModalEditRecipe: React.FC<Props> = ({ item, onDismiss }) => {
+  const { update } = useRecipeUpdate();
+  const { remove } = useRecipeRemove();
 
-  function handleChange(evt: any) {
-    const fieldName = evt.target.name as keyof Product;
-    const value = evt.target.value;
-    setProduct(prev => ({ ...prev, [fieldName]: value }));
+  const [name, setName] = React.useState(item.name);
+  const [unit, setUnit] = React.useState(item.unit);
+
+  async function save() {
+    await update(item.id, { name, unit });
+    onDismiss();
   }
 
-  function handleDelete(evt: any) {
-    onDismiss();
+  function handleChangeName(evt: any) {
+    setName(evt.target.value);
+  }
+
+  function handleChangeUnit(evt: any) {
+    setUnit(Number(evt.target.value));
   }
 
   function handleKeyUp(evt: React.KeyboardEvent<HTMLIonInputElement>) {
     if (evt.key === KEYS.ENTER) {
-      onDismiss(product);
+      save();
     }
   }
 
   function handleClick() {
-    onDismiss(product);
+    save();
+  }
+
+  async function handleDelete(evt: React.MouseEvent<HTMLIonButtonElement>) {
+    await remove(item.id);
+    onDismiss();
   }
 
   return (
@@ -61,33 +76,22 @@ export const ModalEditProduct: React.FC<Props> = ({ item, onDismiss }) => {
           fill="outline"
           label="Nom"
           labelPlacement="stacked"
-          name="name"
-          onIonChange={handleChange}
+          onIonChange={handleChangeName}
           onKeyUp={handleKeyUp}
           required
-          value={product.name}
+          value={name}
         />
         <IonInput
           className="ion-margin-bottom"
           fill="outline"
-          label="Quantité"
+          label="Nombre de personne"
           labelPlacement="stacked"
-          name="quantity"
-          onIonChange={handleChange}
+          min={1}
+          onIonChange={handleChangeUnit}
           onKeyUp={handleKeyUp}
           required
-          value={product.quantity}
-        />
-        <IonInput
-          className="ion-margin-bottom"
-          fill="outline"
-          label="Note"
-          labelPlacement="stacked"
-          name="note"
-          onIonChange={handleChange}
-          onKeyUp={handleKeyUp}
-          placeholder="Ajouter une note"
-          value={product.note}
+          type="number"
+          value={unit}
         />
         <IonToolbar>
           <IonButtons slot="end">

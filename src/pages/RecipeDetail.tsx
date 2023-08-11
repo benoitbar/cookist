@@ -5,9 +5,6 @@ import {
   IonContent,
   IonHeader,
   IonIcon,
-  IonInput,
-  IonItem,
-  IonLabel,
   IonNote,
   IonPage,
   IonTitle,
@@ -18,24 +15,38 @@ import { cart } from 'ionicons/icons';
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
-import { EditableList } from '../components/editable-list/List';
 import { HeaderInput } from '../components/HeaderInput';
 import { ModalChooseList } from '../components/modals/ChooseList';
-import { ModalEditProduct } from '../components/modals/EditProduct';
-import { recipes } from '../fixtures';
-import { ProductItem } from '../components/ProductItem';
+import { useProductSet } from '../modules/resources/products';
+import { useRecipeDetailSnapshot } from '../modules/resources/recipes';
+import { extractQuantity } from '../utils/quantity';
+import { ProductList } from '../components/ProductList';
 
 interface Props
   extends RouteComponentProps<{
     id: string;
   }> {}
 
-export const Recipe: React.FC<Props> = ({ history, match }) => {
-  const recipe = recipes[Number(match.params.id)];
+export const RecipeDetail: React.FC<Props> = ({ match }) => {
+  const { data } = useRecipeDetailSnapshot(match.params.id);
+
+  const { set } = useProductSet();
+
+  async function handleCreateProduct(value: string) {
+    if (data?.ref) {
+      const productName = value.trim();
+      const { name, quantity } = extractQuantity(productName, '1');
+      await set({
+        name,
+        checked: false,
+        parent: data.ref,
+        quantity,
+      });
+    }
+  }
 
   const [present, dismiss] = useIonModal(ModalChooseList, {
-    history,
-    recipe,
+    recipe: data,
     onDismiss: () => dismiss(),
   });
 
@@ -47,14 +58,6 @@ export const Recipe: React.FC<Props> = ({ history, match }) => {
     });
   }
 
-  async function handleAddIngredient(value: string) {}
-  async function handleUpdateIngredient(
-    ingredient: (typeof recipes)[number]['products'][number]
-  ) {}
-  async function handleDeleteIngredient(
-    ingredient: (typeof recipes)[number]['products'][number]
-  ) {}
-
   return (
     <IonPage>
       <IonHeader>
@@ -62,7 +65,10 @@ export const Recipe: React.FC<Props> = ({ history, match }) => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/recipes" />
           </IonButtons>
-          <IonTitle>{recipe.name}</IonTitle>
+          <IonTitle>{data?.name}</IonTitle>
+          <IonNote className="ion-padding-horizontal" color="light">
+            Pour {data?.unit} personnes
+          </IonNote>
           <IonButtons slot="end">
             <IonButton onClick={handleAddToList}>
               <IonIcon slot="icon-only" icon={cart} />
@@ -71,17 +77,18 @@ export const Recipe: React.FC<Props> = ({ history, match }) => {
         </IonToolbar>
         <HeaderInput
           placeholder="Ajouter un ingredient"
-          onAdd={handleAddIngredient}
+          onAdd={handleCreateProduct}
         />
       </IonHeader>
       <IonContent fullscreen>
-        <EditableList
-          data={recipe.products}
+        {/* <EditableList
+          data={products}
+          getKey={item => item.name}
           Item={ProductItem}
           Modal={ModalEditProduct}
-          onDeleteItem={handleDeleteIngredient}
-          onUpdateItem={handleUpdateIngredient}
-        />
+          onContextMenu={handleUpdateIngredient}
+        /> */}
+        {data?.ref ? <ProductList parent={data.ref} /> : null}
       </IonContent>
     </IonPage>
   );
