@@ -1,7 +1,7 @@
 import {
+  DocumentData,
   DocumentReference,
   DocumentSnapshot,
-  FirestoreError,
   onSnapshot,
 } from 'firebase/firestore';
 import { Reducer, useEffect, useReducer } from 'react';
@@ -32,11 +32,13 @@ function reducer<T>(state: State<T>, action: Action<T>): State<T> {
   }
 }
 
-export function useDetailSnapshot<T>(ref: DocumentReference<T>) {
-  const [state, dispatch] = useReducer<Reducer<State<T>, Action<T>>>(
-    reducer,
-    initialState
-  );
+export function useDetailSnapshot<
+  AppModelType = DocumentData,
+  DbModelType extends DocumentData = DocumentData
+>(ref: DocumentReference<AppModelType, DbModelType>) {
+  const [state, dispatch] = useReducer<
+    Reducer<State<AppModelType>, Action<AppModelType>>
+  >(reducer, initialState);
   const [flasState, flagDispatch] = useFlagsReducer();
 
   useEffect(() => {

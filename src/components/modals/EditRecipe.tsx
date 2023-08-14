@@ -10,11 +10,7 @@ import {
 import { arrowBack, trash } from 'ionicons/icons';
 import React from 'react';
 
-import {
-  Recipe,
-  useRecipeRemove,
-  useRecipeUpdate,
-} from '../../modules/resources/recipes';
+import { Recipe } from '../../modules/resources/recipes';
 import { KEYS } from '../../utils/keys';
 
 import './modal.css';
@@ -25,23 +21,16 @@ interface Props {
 }
 
 export const ModalEditRecipe: React.FC<Props> = ({ item, onDismiss }) => {
-  const { update } = useRecipeUpdate();
-  const { remove } = useRecipeRemove();
+  const [recipe, setRecipe] = React.useState<Recipe>(item);
 
-  const [name, setName] = React.useState(item.name);
-  const [unit, setUnit] = React.useState(item.unit);
-
-  async function save() {
-    await update(item.id, { name, unit });
-    onDismiss();
+  function save() {
+    onDismiss(recipe);
   }
 
-  function handleChangeName(evt: any) {
-    setName(evt.target.value);
-  }
-
-  function handleChangeUnit(evt: any) {
-    setUnit(Number(evt.target.value));
+  function handleChange(evt: any) {
+    const fieldName = evt.target.name as keyof Recipe;
+    const value = evt.target.value;
+    setRecipe(prev => ({ ...prev, [fieldName]: value }));
   }
 
   function handleKeyUp(evt: React.KeyboardEvent<HTMLIonInputElement>) {
@@ -54,8 +43,7 @@ export const ModalEditRecipe: React.FC<Props> = ({ item, onDismiss }) => {
     save();
   }
 
-  async function handleDelete(evt: React.MouseEvent<HTMLIonButtonElement>) {
-    await remove(item.id);
+  function handleDelete() {
     onDismiss();
   }
 
@@ -76,10 +64,11 @@ export const ModalEditRecipe: React.FC<Props> = ({ item, onDismiss }) => {
           fill="outline"
           label="Nom"
           labelPlacement="stacked"
-          onIonChange={handleChangeName}
+          name="name"
+          onIonChange={handleChange}
           onKeyUp={handleKeyUp}
           required
-          value={name}
+          value={recipe.name}
         />
         <IonInput
           className="ion-margin-bottom"
@@ -87,11 +76,12 @@ export const ModalEditRecipe: React.FC<Props> = ({ item, onDismiss }) => {
           label="Nombre de personne"
           labelPlacement="stacked"
           min={1}
-          onIonChange={handleChangeUnit}
+          name="unit"
+          onIonChange={handleChange}
           onKeyUp={handleKeyUp}
           required
           type="number"
-          value={unit}
+          value={recipe.unit}
         />
         <IonToolbar>
           <IonButtons slot="end">

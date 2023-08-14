@@ -30,7 +30,7 @@ export const ModalEditProduct: React.FC<Props> = ({ item, onDismiss }) => {
     setProduct(prev => ({ ...prev, [fieldName]: value }));
   }
 
-  function handleDelete(evt: any) {
+  function handleDelete() {
     onDismiss();
   }
 

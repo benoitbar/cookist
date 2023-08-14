@@ -13,8 +13,11 @@ import { HeaderInput } from '../components/HeaderInput';
 import { ModalEditRecipe } from '../components/modals/EditRecipe';
 import { RecipeItem } from '../components/RecipeItem';
 import {
+  Recipe,
   useRecipeCollectionSnapshot,
+  useRecipeRemove,
   useRecipeSet,
+  useRecipeUpdate,
 } from '../modules/resources/recipes';
 import { slugify } from '../utils/slugify';
 
@@ -26,6 +29,8 @@ interface Props
 export const RecipeList: React.FC<Props> = () => {
   const { data } = useRecipeCollectionSnapshot();
   const { set } = useRecipeSet();
+  const { update } = useRecipeUpdate();
+  const { remove } = useRecipeRemove();
 
   async function handleCreateRecipe(value: string) {
     const name = value.trim();
@@ -33,7 +38,13 @@ export const RecipeList: React.FC<Props> = () => {
     await set(id, { name: value });
   }
 
-  function handleUpdateRecipe(item: any) {}
+  async function handleUpdateRecipe(item: Recipe, data: Recipe | void) {
+    if (data) {
+      await update(item.id, data);
+    } else {
+      await remove(item.id);
+    }
+  }
 
   return (
     <IonPage>

@@ -81,13 +81,6 @@ export const RecipeDetail: React.FC<Props> = ({ match }) => {
         />
       </IonHeader>
       <IonContent fullscreen>
-        {/* <EditableList
-          data={products}
-          getKey={item => item.name}
-          Item={ProductItem}
-          Modal={ModalEditProduct}
-          onContextMenu={handleUpdateIngredient}
-        /> */}
         {data?.ref ? <ProductList parent={data.ref} /> : null}
       </IonContent>
     </IonPage>

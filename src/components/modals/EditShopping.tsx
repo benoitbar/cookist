@@ -10,11 +10,7 @@ import {
 import { arrowBack, trash } from 'ionicons/icons';
 import React from 'react';
 
-import {
-  Shopping,
-  useShoppingRemove,
-  useShoppingUpdate,
-} from '../../modules/resources/shopping';
+import { Shopping } from '../../modules/resources/shopping';
 import { KEYS } from '../../utils/keys';
 
 import './modal.css';
@@ -25,18 +21,16 @@ interface Props {
 }
 
 export const ModalEditShopping: React.FC<Props> = ({ item, onDismiss }) => {
-  const { update } = useShoppingUpdate();
-  const { remove } = useShoppingRemove();
+  const [shopping, setShopping] = React.useState<Shopping>(item);
 
-  const [name, setName] = React.useState(item.name);
-
-  async function save() {
-    await update(item.id, { name });
-    onDismiss();
+  function save() {
+    onDismiss(shopping);
   }
 
   function handleChange(evt: any) {
-    setName(evt.target.value);
+    const fieldName = evt.target.name as keyof Shopping;
+    const value = evt.target.value;
+    setShopping(prev => ({ ...prev, [fieldName]: value }));
   }
 
   function handleKeyUp(evt: React.KeyboardEvent<HTMLIonInputElement>) {
@@ -45,12 +39,11 @@ export const ModalEditShopping: React.FC<Props> = ({ item, onDismiss }) => {
     }
   }
 
-  function handleClick(evt: React.MouseEvent<HTMLIonButtonElement>) {
+  function handleClick() {
     save();
   }
 
-  async function handleDelete(evt: React.MouseEvent<HTMLIonButtonElement>) {
-    await remove(item.id);
+  function handleDelete() {
     onDismiss();
   }
 
@@ -71,10 +64,11 @@ export const ModalEditShopping: React.FC<Props> = ({ item, onDismiss }) => {
           fill="outline"
           label="Nom"
           labelPlacement="stacked"
+          name="name"
           onIonChange={handleChange}
           onKeyUp={handleKeyUp}
           required
-          value={name}
+          value={shopping.name}
         />
         <IonToolbar>
           <IonButtons slot="end">

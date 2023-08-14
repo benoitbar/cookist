@@ -23,7 +23,10 @@ export const ProductList: React.FC<Props> = ({ canSwipe = false, parent }) => {
   const { remove } = useProductRemove();
   const { update } = useProductUpdate();
 
-  async function handleUpdate(item: Shopping, data: Shopping | void) {
+  async function handleUpdate(
+    item: Shopping | Recipe,
+    data: Shopping | Recipe | void
+  ) {
     if (data) {
       await update(item.id, data);
     } else {
@@ -31,7 +34,7 @@ export const ProductList: React.FC<Props> = ({ canSwipe = false, parent }) => {
     }
   }
 
-  async function handleDelete(item: any) {
+  async function handleDelete(item: Shopping | Recipe) {
     await remove(item.id);
   }
 

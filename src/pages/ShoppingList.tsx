@@ -11,14 +11,19 @@ import { HeaderInput } from '../components/HeaderInput';
 import { ModalEditShopping } from '../components/modals/EditShopping';
 import { ShoppingItem } from '../components/ShoppingItem';
 import {
+  Shopping,
   useShoppingCollectionSnapshot,
+  useShoppingRemove,
   useShoppingSet,
+  useShoppingUpdate,
 } from '../modules/resources/shopping';
 import { slugify } from '../utils/slugify';
 
 export const ShoppingList: React.FC = () => {
   const { data } = useShoppingCollectionSnapshot();
   const { set } = useShoppingSet();
+  const { update } = useShoppingUpdate();
+  const { remove } = useShoppingRemove();
 
   async function handleCreateItem(value: string) {
     const name = value.trim();
@@ -26,7 +31,13 @@ export const ShoppingList: React.FC = () => {
     await set(id, { name });
   }
 
-  async function handleUpdateItem(item: any) {}
+  async function handleUpdateItem(item: Shopping, data: Shopping | void) {
+    if (data) {
+      await update(item.id, data);
+    } else {
+      await remove(item.id);
+    }
+  }
 
   return (
     <IonPage>
