@@ -1,0 +1,7 @@
+{
+  "name": "cookist",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}

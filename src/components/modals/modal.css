@@ -1,0 +1,12 @@
+.block {
+  height: 100vh;
+}
+
+.mid-block {
+  height: 50vh;
+}
+
+
+.sheet-modal {
+  --height: auto;
+}
