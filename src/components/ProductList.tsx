@@ -1,46 +1,40 @@
 import React from 'react';
-import { DocumentReference } from 'firebase/firestore';
 
+import { api } from '../../convex/_generated/api';
+import { Doc, Id } from '../../convex/_generated/dataModel';
 import { EditableList } from '../components/editable-list/List';
 import { ModalEditProduct } from '../components/modals/EditProduct';
 import { ProductItem } from '../components/ProductItem';
-import {
-  useProductCollectionSnapshot,
-  useProductRemove,
-  useProductUpdate,
-} from '../modules/resources/products';
-import { Recipe } from '../modules/resources/recipes';
-import { Shopping } from '../modules/resources/shopping';
+import { useMutation } from 'convex/react';
 
 interface Props {
+  data: Doc<'products'>[];
   canSwipe?: boolean;
-  parent: DocumentReference;
 }
 
-export const ProductList: React.FC<Props> = ({ canSwipe = false, parent }) => {
-  const { data } = useProductCollectionSnapshot(parent);
-
-  const { remove } = useProductRemove();
-  const { update } = useProductUpdate();
+export const ProductList: React.FC<Props> = ({ data, canSwipe = false }) => {
+  const update = useMutation(api.products.update);
+  const remove = useMutation(api.products.remove);
 
   async function handleUpdate(
-    item: Shopping | Recipe,
-    data: Shopping | Recipe | void
+    oldItem: Doc<'products'>,
+    newItem: Doc<'products'> | void
   ) {
-    if (data) {
-      await update(item.id, data);
+    if (newItem) {
+      const { _creationTime, parent, ...data } = newItem;
+      await update(data);
     } else {
-      await remove(item.id);
+      await remove({ _id: oldItem._id });
     }
   }
 
-  async function handleDelete(item: Shopping | Recipe) {
-    await remove(item.id);
+  async function handleDelete(item: Doc<'products'>) {
+    await remove({ _id: item._id });
   }
 
   return (
     <EditableList
-      data={data || []}
+      data={data}
       Item={ProductItem}
       Modal={ModalEditProduct}
       onEdit={handleUpdate}

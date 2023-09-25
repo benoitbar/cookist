@@ -11,37 +11,48 @@ import {
 import { arrowBack, trash } from 'ionicons/icons';
 import React from 'react';
 
-import { Product } from '../../modules/resources/products';
+import { Doc, Id } from '../../../convex/_generated/dataModel';
 import { KEYS } from '../../utils/keys';
 
 import './modal.css';
 
 interface Props {
-  item: Product;
-  onDismiss: any;
+  item: Doc<'products'>;
+  onDismiss: (
+    data: {
+      _id: Id<'products'>;
+      name: string;
+      note?: string;
+      quantity: string;
+    } | void
+  ) => void;
 }
 
 export const ModalEditProduct: React.FC<Props> = ({ item, onDismiss }) => {
-  const [product, setProduct] = React.useState<Product>(item);
+  const [product, setProduct] = React.useState<Doc<'products'>>(item);
+
+  function save() {
+    onDismiss(product);
+  }
 
   function handleChange(evt: any) {
-    const fieldName = evt.target.name as keyof Product;
+    const fieldName = evt.target.name as keyof Doc<'products'>;
     const value = evt.target.value;
     setProduct(prev => ({ ...prev, [fieldName]: value }));
   }
 
-  function handleDelete() {
-    onDismiss();
-  }
-
   function handleKeyUp(evt: React.KeyboardEvent<HTMLIonInputElement>) {
     if (evt.key === KEYS.ENTER) {
-      onDismiss(product);
+      save();
     }
   }
 
   function handleClick() {
-    onDismiss(product);
+    save();
+  }
+
+  function handleDelete() {
+    onDismiss();
   }
 
   return (

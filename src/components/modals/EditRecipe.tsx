@@ -10,25 +10,27 @@ import {
 import { arrowBack, trash } from 'ionicons/icons';
 import React from 'react';
 
-import { Recipe } from '../../modules/resources/recipes';
+import { Doc, Id } from '../../../convex/_generated/dataModel';
 import { KEYS } from '../../utils/keys';
 
 import './modal.css';
 
 interface Props {
-  item: Recipe;
-  onDismiss: any;
+  item: Doc<'recipes'>;
+  onDismiss: (
+    data: { _id: Id<'recipes'>; name: string; unit: number } | void
+  ) => void;
 }
 
 export const ModalEditRecipe: React.FC<Props> = ({ item, onDismiss }) => {
-  const [recipe, setRecipe] = React.useState<Recipe>(item);
+  const [recipe, setRecipe] = React.useState<Doc<'recipes'>>(item);
 
   function save() {
     onDismiss(recipe);
   }
 
   function handleChange(evt: any) {
-    const fieldName = evt.target.name as keyof Recipe;
+    const fieldName = evt.target.name as keyof Doc<'recipes'>;
     const value = evt.target.value;
     setRecipe(prev => ({ ...prev, [fieldName]: value }));
   }

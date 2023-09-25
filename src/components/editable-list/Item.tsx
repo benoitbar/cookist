@@ -6,7 +6,7 @@ interface Props<T> {
   children: React.ReactElement;
   item: T;
   Modal: any;
-  onEdit: (item: T, data: T) => void;
+  onEdit: (oldItem: T, newItem: T) => void;
   onSwipe?: (item: T) => void;
 }
 

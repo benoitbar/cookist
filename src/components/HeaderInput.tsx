@@ -30,7 +30,7 @@ export const HeaderInput: React.FC<Props> = ({ placeholder, onAdd }) => {
     }
   }
 
-  function handleClick(evt: React.MouseEvent<HTMLIonButtonElement>) {
+  function handleClick() {
     handleAdd();
   }
 
