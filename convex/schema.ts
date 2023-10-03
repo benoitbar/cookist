@@ -11,8 +11,8 @@ export default defineSchema({
   recipes: defineTable({
     name: v.string(),
     unit: v.number(),
-  }),
+  }).index('by_name', ['name']),
   shopping: defineTable({
     name: v.string(),
-  }),
+  }).index('by_name', ['name']),
 });

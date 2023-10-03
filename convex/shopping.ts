@@ -5,7 +5,10 @@ import { mutation, query } from './_generated/server';
 export const getCollection = query({
   args: {},
   handler: async ctx => {
-    return await ctx.db.query('shopping').collect();
+    return await ctx.db
+      .query('shopping')
+      .withIndex('by_name', q => q)
+      .collect();
   },
 });
 
