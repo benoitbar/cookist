@@ -7,7 +7,7 @@ import {
   IonInput,
   IonToolbar,
 } from '@ionic/react';
-import { arrowBack, trash } from 'ionicons/icons';
+import { arrowBack, checkmark, trash } from 'ionicons/icons';
 import React from 'react';
 
 import { Doc, Id } from '../../../convex/_generated/dataModel';
@@ -41,7 +41,7 @@ export const ModalEditRecipe: React.FC<Props> = ({ item, onDismiss }) => {
     }
   }
 
-  function handleClick() {
+  function handleUpdate() {
     save();
   }
 
@@ -54,7 +54,7 @@ export const ModalEditRecipe: React.FC<Props> = ({ item, onDismiss }) => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonButton onClick={handleClick}>
+            <IonButton onClick={handleUpdate}>
               <IonIcon slot="icon-only" icon={arrowBack} />
             </IonButton>
           </IonButtons>
@@ -86,10 +86,16 @@ export const ModalEditRecipe: React.FC<Props> = ({ item, onDismiss }) => {
           value={recipe.unit}
         />
         <IonToolbar>
-          <IonButtons slot="end">
+          <IonButtons slot="start">
             <IonButton color="danger" onClick={handleDelete}>
               Supprimer
               <IonIcon icon={trash} slot="end"></IonIcon>
+            </IonButton>
+          </IonButtons>
+          <IonButtons slot="end">
+            <IonButton color="success" onClick={handleUpdate}>
+              Valider
+              <IonIcon icon={checkmark} slot="end"></IonIcon>
             </IonButton>
           </IonButtons>
         </IonToolbar>
