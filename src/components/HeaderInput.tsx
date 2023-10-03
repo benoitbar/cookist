@@ -19,9 +19,12 @@ export const HeaderInput: React.FC<Props> = ({ placeholder, onAdd }) => {
   const inputRef = React.useRef<any>();
 
   async function handleAdd() {
-    const elt = await inputRef.current.getInputElement();
-    onAdd(elt.value);
-    elt.value = '';
+    const elt: HTMLInputElement = await inputRef.current.getInputElement();
+    const value = elt.value;
+    if (value) {
+      onAdd(elt.value);
+      elt.value = '';
+    }
   }
 
   function handleKeyUp(evt: React.KeyboardEvent<HTMLIonInputElement>) {
@@ -43,13 +46,15 @@ export const HeaderInput: React.FC<Props> = ({ placeholder, onAdd }) => {
       </IonButtons>
       <IonInput
         aria-label="Nom"
-        autofocus
+        autocapitalize="none"
         className="ion-padding-end"
         clearInput
         onKeyUp={handleKeyUp}
         placeholder={placeholder}
         ref={inputRef}
         required
+        // `type="url"` is a workaround to force `autocapitalize="none"` to work
+        type="url"
       />
     </IonToolbar>
   );
