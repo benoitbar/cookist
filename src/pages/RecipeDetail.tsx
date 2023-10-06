@@ -11,14 +11,15 @@ import {
   IonToolbar,
   useIonModal,
 } from '@ionic/react';
+import { useMutation, useQuery } from 'convex/react';
 import { cart } from 'ionicons/icons';
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
+import { api } from '../../convex/_generated/api';
+import { Id } from '../../convex/_generated/dataModel';
 import { HeaderInput } from '../components/HeaderInput';
 import { ModalChooseList } from '../components/modals/ChooseList';
-import { useProductSet } from '../modules/resources/products';
-import { useRecipeDetailSnapshot } from '../modules/resources/recipes';
 import { extractQuantity } from '../utils/quantity';
 import { ProductList } from '../components/ProductList';
 
@@ -28,26 +29,23 @@ interface Props
   }> {}
 
 export const RecipeDetail: React.FC<Props> = ({ match }) => {
-  const { data } = useRecipeDetailSnapshot(match.params.id);
-
-  const { set } = useProductSet();
+  const id = match.params.id as Id<'recipes'>;
+  const data = useQuery(api.recipes.get, { id });
+  const create = useMutation(api.products.create);
 
   async function handleCreateProduct(value: string) {
-    if (data?.ref) {
-      const productName = value.trim();
-      const { name, quantity } = extractQuantity(productName, '1');
-      await set({
-        name,
-        checked: false,
-        parent: data.ref,
-        quantity,
-      });
-    }
+    const productName = value.trim();
+    const { name, quantity } = extractQuantity(productName, '1');
+    await create({
+      name,
+      parent: id,
+      quantity,
+    });
   }
 
   const [present, dismiss] = useIonModal(ModalChooseList, {
-    recipe: data,
     onDismiss: () => dismiss(),
+    recipe: data,
   });
 
   function handleAddToList() {
@@ -81,7 +79,7 @@ export const RecipeDetail: React.FC<Props> = ({ match }) => {
         />
       </IonHeader>
       <IonContent fullscreen>
-        {data?.ref ? <ProductList parent={data.ref} /> : null}
+        <ProductList data={data?.products || []} />
       </IonContent>
     </IonPage>
   );

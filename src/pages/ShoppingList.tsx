@@ -5,37 +5,35 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
+import { useMutation, useQuery } from 'convex/react';
 
+import { api } from '../../convex/_generated/api';
+import { Doc } from '../../convex/_generated/dataModel';
 import { EditableList } from '../components/editable-list/List';
 import { HeaderInput } from '../components/HeaderInput';
 import { ModalEditShopping } from '../components/modals/EditShopping';
 import { ShoppingItem } from '../components/ShoppingItem';
-import {
-  Shopping,
-  useShoppingCollectionSnapshot,
-  useShoppingRemove,
-  useShoppingSet,
-  useShoppingUpdate,
-} from '../modules/resources/shopping';
-import { slugify } from '../utils/slugify';
 
 export const ShoppingList: React.FC = () => {
-  const { data } = useShoppingCollectionSnapshot();
-  const { set } = useShoppingSet();
-  const { update } = useShoppingUpdate();
-  const { remove } = useShoppingRemove();
+  const data = useQuery(api.shopping.getCollection);
+  const create = useMutation(api.shopping.create);
+  const update = useMutation(api.shopping.update);
+  const remove = useMutation(api.shopping.remove);
 
   async function handleCreateItem(value: string) {
     const name = value.trim();
-    const id = slugify(name);
-    await set(id, { name });
+    await create({ name });
   }
 
-  async function handleUpdateItem(item: Shopping, data: Shopping | void) {
-    if (data) {
-      await update(item.id, data);
+  async function handleUpdateItem(
+    oldItem: Doc<'shopping'>,
+    newItem: Doc<'shopping'> | void
+  ) {
+    if (newItem) {
+      const { _creationTime, ...data } = newItem;
+      await update(data);
     } else {
-      await remove(item.id);
+      await remove({ _id: oldItem._id });
     }
   }
 
@@ -49,7 +47,7 @@ export const ShoppingList: React.FC = () => {
       </IonHeader>
       <IonContent fullscreen>
         <EditableList
-          data={data || []}
+          data={data}
           Item={ShoppingItem}
           Modal={ModalEditShopping}
           onEdit={handleUpdateItem}

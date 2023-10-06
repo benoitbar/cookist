@@ -14,38 +14,31 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
+import { useMutation, useQuery } from 'convex/react';
 import { close, list } from 'ionicons/icons';
 import { useEffect, useState } from 'react';
 
-import { Recipe } from '../../modules/resources/recipes';
-import {
-  Shopping,
-  useShoppingCollectionSnapshot,
-} from '../../modules/resources/shopping';
+import { api } from '../../../convex/_generated/api';
+import { Doc } from '../../../convex/_generated/dataModel';
 import { extractUnit } from '../../utils/quantity';
 
 import './ChooseList.css';
 import './modal.css';
-import {
-  Product,
-  useProductCollectionSnapshot,
-  useProductSet,
-} from '../../modules/resources/products';
 
 interface Props {
-  recipe: Recipe;
   onDismiss: () => void;
+  recipe: Doc<'recipes'>;
 }
 
-export const ModalChooseList: React.FC<Props> = ({ recipe, onDismiss }) => {
-  // TODO: no need to use snapshots here
-  const { data: shoppingList } = useShoppingCollectionSnapshot();
-  const { data: productList } = useProductCollectionSnapshot(recipe.ref);
-
-  const { set } = useProductSet();
+export const ModalChooseList: React.FC<Props> = ({ onDismiss, recipe }) => {
+  const shoppingList = useQuery(api.shopping.getCollection);
+  const productList = useQuery(api.products.getCollection, {
+    parent: recipe._id,
+  });
+  const create = useMutation(api.products.create);
 
   const [unit, setUnit] = useState<number>(recipe.unit);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Doc<'products'>[]>([]);
   const [checked, setChecked] = useState<string[] | void>();
 
   function handleCheckboxChange(evt: any) {
@@ -85,14 +78,15 @@ export const ModalChooseList: React.FC<Props> = ({ recipe, onDismiss }) => {
     }
   }, [productList, unit]);
 
-  async function handleAddToList(item: Shopping) {
+  async function handleAddToList(item: Doc<'shopping'>) {
     if (Array.isArray(checked) && checked.length > 0) {
       // TODO: update shopping products if already exist ?
       await Promise.allSettled(
         products
           .filter(product => checked.includes(product.name))
           .map(async product => {
-            await set({ ...product, parent: item.ref });
+            const { _id, _creationTime, parent, ...data } = product;
+            await create({ ...data, parent: item._id });
           })
       );
     }

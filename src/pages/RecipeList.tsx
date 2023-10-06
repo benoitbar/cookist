@@ -5,21 +5,16 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
+import { useMutation, useQuery } from 'convex/react';
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
+import { api } from '../../convex/_generated/api';
+import { Doc } from '../../convex/_generated/dataModel';
 import { EditableList } from '../components/editable-list/List';
 import { HeaderInput } from '../components/HeaderInput';
 import { ModalEditRecipe } from '../components/modals/EditRecipe';
 import { RecipeItem } from '../components/RecipeItem';
-import {
-  Recipe,
-  useRecipeCollectionSnapshot,
-  useRecipeRemove,
-  useRecipeSet,
-  useRecipeUpdate,
-} from '../modules/resources/recipes';
-import { slugify } from '../utils/slugify';
 
 interface Props
   extends RouteComponentProps<{
@@ -27,22 +22,25 @@ interface Props
   }> {}
 
 export const RecipeList: React.FC<Props> = () => {
-  const { data } = useRecipeCollectionSnapshot();
-  const { set } = useRecipeSet();
-  const { update } = useRecipeUpdate();
-  const { remove } = useRecipeRemove();
+  const data = useQuery(api.recipes.getCollection);
+  const create = useMutation(api.recipes.create);
+  const update = useMutation(api.recipes.update);
+  const remove = useMutation(api.recipes.remove);
 
   async function handleCreateRecipe(value: string) {
     const name = value.trim();
-    const id = slugify(name);
-    await set(id, { name: value });
+    await create({ name: value, unit: 4 });
   }
 
-  async function handleUpdateRecipe(item: Recipe, data: Recipe | void) {
-    if (data) {
-      await update(item.id, data);
+  async function handleUpdateRecipe(
+    oldItem: Doc<'recipes'>,
+    newItem: Doc<'recipes'> | void
+  ) {
+    if (newItem) {
+      const { _creationTime, ...data } = newItem;
+      await update(data);
     } else {
-      await remove(item.id);
+      await remove({ _id: oldItem._id });
     }
   }
 
@@ -59,7 +57,7 @@ export const RecipeList: React.FC<Props> = () => {
       </IonHeader>
       <IonContent fullscreen>
         <EditableList
-          data={data || []}
+          data={data}
           Item={RecipeItem}
           Modal={ModalEditRecipe}
           onEdit={handleUpdateRecipe}

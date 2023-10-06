@@ -2,25 +2,26 @@ import { IonList } from '@ionic/react';
 import React from 'react';
 
 import { EditableListItem } from './Item';
+import { Spinner } from '../Spinner';
 
 interface Props<T> {
-  data: T[];
+  data: T[] | void;
   getKey?: (item: T) => React.Key;
   Item: any;
   Modal: any;
-  onEdit: (item: T, data: T) => void;
+  onEdit: (oldItem: T, newItem: T) => void;
   onSwipe?: (item: T) => void;
 }
 
 export const EditableList: React.FC<Props<any>> = <T,>({
   data,
-  getKey = (item: any) => item.id,
+  getKey = (item: any) => item._id,
   Item,
   Modal,
   onSwipe,
   onEdit,
 }: Props<T>) => {
-  return (
+  return data ? (
     <IonList className="ion-no-padding" lines="full">
       {data.map(item => (
         <EditableListItem
@@ -34,5 +35,7 @@ export const EditableList: React.FC<Props<any>> = <T,>({
         </EditableListItem>
       ))}
     </IonList>
+  ) : (
+    <Spinner />
   );
 };

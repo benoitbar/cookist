@@ -9,17 +9,18 @@ import {
 import { cart } from 'ionicons/icons';
 import React from 'react';
 
+import { Doc } from '../../convex/_generated/dataModel';
 import { ModalChooseList } from '../components/modals/ChooseList';
-import { Recipe } from '../modules/resources/recipes';
 
 interface Props {
-  item: Recipe;
+  item: Doc<'recipes'>;
 }
 
 export const RecipeItem: React.FC<Props> = ({ item }) => {
   const [present, dismiss] = useIonModal(ModalChooseList, {
-    recipe: item,
     onDismiss: () => dismiss(),
+    products: [],
+    recipe: item,
   });
 
   function handleAddToList(evt: React.MouseEvent<HTMLIonButtonElement>) {
@@ -33,7 +34,7 @@ export const RecipeItem: React.FC<Props> = ({ item }) => {
   }
 
   return (
-    <IonItem routerLink={`/recipes/${item.id}`}>
+    <IonItem routerLink={`/recipes/${item._id}`}>
       <IonLabel>
         {item.name} {}
       </IonLabel>

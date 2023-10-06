@@ -1,10 +1,10 @@
 import { IonItem, IonLabel, IonNote } from '@ionic/react';
 import React from 'react';
 
-import { Product } from '../modules/resources/products';
+import { Doc } from '../../convex/_generated/dataModel';
 
 interface Props {
-  item: Product;
+  item: Doc<'products'>;
 }
 
 export const ProductItem: React.FC<Props> = ({ item }) => {

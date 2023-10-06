@@ -7,28 +7,28 @@ import {
   IonInput,
   IonToolbar,
 } from '@ionic/react';
-import { arrowBack, trash } from 'ionicons/icons';
+import { arrowBack, checkmark, trash } from 'ionicons/icons';
 import React from 'react';
 
-import { Shopping } from '../../modules/resources/shopping';
+import { Doc, Id } from '../../../convex/_generated/dataModel';
 import { KEYS } from '../../utils/keys';
 
 import './modal.css';
 
 interface Props {
-  item: Shopping;
-  onDismiss: any;
+  item: Doc<'shopping'>;
+  onDismiss: (data: { _id: Id<'shopping'>; name: string } | void) => void;
 }
 
 export const ModalEditShopping: React.FC<Props> = ({ item, onDismiss }) => {
-  const [shopping, setShopping] = React.useState<Shopping>(item);
+  const [shopping, setShopping] = React.useState<Doc<'shopping'>>(item);
 
   function save() {
     onDismiss(shopping);
   }
 
   function handleChange(evt: any) {
-    const fieldName = evt.target.name as keyof Shopping;
+    const fieldName = evt.target.name as keyof Doc<'shopping'>;
     const value = evt.target.value;
     setShopping(prev => ({ ...prev, [fieldName]: value }));
   }
@@ -39,7 +39,7 @@ export const ModalEditShopping: React.FC<Props> = ({ item, onDismiss }) => {
     }
   }
 
-  function handleClick() {
+  function handleUpdate() {
     save();
   }
 
@@ -52,7 +52,7 @@ export const ModalEditShopping: React.FC<Props> = ({ item, onDismiss }) => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonButton onClick={handleClick}>
+            <IonButton onClick={handleUpdate}>
               <IonIcon slot="icon-only" icon={arrowBack} />
             </IonButton>
           </IonButtons>
@@ -71,10 +71,16 @@ export const ModalEditShopping: React.FC<Props> = ({ item, onDismiss }) => {
           value={shopping.name}
         />
         <IonToolbar>
-          <IonButtons slot="end">
+          <IonButtons slot="start">
             <IonButton color="danger" onClick={handleDelete}>
               Supprimer
               <IonIcon icon={trash} slot="end"></IonIcon>
+            </IonButton>
+          </IonButtons>
+          <IonButtons slot="end">
+            <IonButton color="success" onClick={handleUpdate}>
+              Valider
+              <IonIcon icon={checkmark} slot="end"></IonIcon>
             </IonButton>
           </IonButtons>
         </IonToolbar>
