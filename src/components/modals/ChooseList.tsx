@@ -117,22 +117,24 @@ export const ModalChooseList: React.FC<Props> = ({ onDismiss, recipe }) => {
         />{' '}
         personnes
       </IonItem>
-      {products.map(product => (
-        <IonItem key={product.name} lines="none">
-          <IonCheckbox
-            checked={!!checked && checked.indexOf(product.name) > -1}
-            onIonChange={handleCheckboxChange}
-            slot="start"
-            value={product.name}
-          />
-          <IonLabel>{product.name}</IonLabel>
-          <IonNote slot="end">{product.quantity}</IonNote>
-        </IonItem>
-      ))}
+      <div className="scrollable">
+        {products.map(product => (
+          <IonItem key={product.name} lines="none">
+            <IonCheckbox
+              checked={!!checked && checked.indexOf(product.name) > -1}
+              onIonChange={handleCheckboxChange}
+              slot="start"
+              value={product.name}
+            />
+            <IonLabel>{product.name}</IonLabel>
+            <IonNote slot="end">{product.quantity}</IonNote>
+          </IonItem>
+        ))}
+      </div>
       <IonItemDivider>
         <IonLabel>Listes</IonLabel>
       </IonItemDivider>
-      <IonContent>
+      <div className="scrollable">
         <IonList className="ion-no-padding" lines="full">
           {shoppingList?.map(item => (
             <IonItem
@@ -145,7 +147,7 @@ export const ModalChooseList: React.FC<Props> = ({ onDismiss, recipe }) => {
             </IonItem>
           ))}
         </IonList>
-      </IonContent>
+      </div>
     </div>
   );
 };

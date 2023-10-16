@@ -3,3 +3,8 @@ ion-input.unit {
   --padding-start: 10px !important;
   width: 70px;
 }
+
+.scrollable {
+  max-height: 45%;
+  overflow-y: auto;
+}
