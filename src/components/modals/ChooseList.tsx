@@ -86,7 +86,7 @@ export const ModalChooseList: React.FC<Props> = ({ onDismiss, recipe }) => {
           .filter(product => checked.includes(product.name))
           .map(async product => {
             const { _id, _creationTime, parent, ...data } = product;
-            await create({ ...data, parent: item._id });
+            await create({ ...data, checked: false, parent: item._id });
           })
       );
     }

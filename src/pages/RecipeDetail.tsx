@@ -19,9 +19,10 @@ import { RouteComponentProps } from 'react-router-dom';
 import { api } from '../../convex/_generated/api';
 import { Id } from '../../convex/_generated/dataModel';
 import { HeaderInput } from '../components/HeaderInput';
+import { List } from '../components/List';
 import { ModalChooseList } from '../components/modals/ChooseList';
+import { ProductItem } from '../components/ProductItem';
 import { extractQuantity } from '../utils/quantity';
-import { ProductList } from '../components/ProductList';
 
 interface Props
   extends RouteComponentProps<{
@@ -79,7 +80,7 @@ export const RecipeDetail: React.FC<Props> = ({ match }) => {
         />
       </IonHeader>
       <IonContent fullscreen>
-        <ProductList data={data?.products || []} />
+        <List data={data?.products || []} Item={ProductItem} />
       </IonContent>
     </IonPage>
   );
