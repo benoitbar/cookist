@@ -50,6 +50,8 @@ export const remove = mutation({
 export const removeBulk = mutation({
   args: { ids: v.array(v.id('products')) },
   handler: async (ctx, args) => {
-    return await Promise.all(args.ids.map(id => ctx.db.delete(id)));
+    return await Promise.allSettled(
+      args.ids.map(async id => await ctx.db.delete(id))
+    );
   },
 });
