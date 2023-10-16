@@ -15,6 +15,7 @@ export const getCollection = query({
 
 export const create = mutation({
   args: {
+    checked: v.optional(v.boolean()),
     name: v.string(),
     note: v.optional(v.string()),
     parent: v.union(v.id('recipes'), v.id('shopping')),
@@ -28,6 +29,7 @@ export const create = mutation({
 export const update = mutation({
   args: {
     _id: v.id('products'),
+    checked: v.optional(v.boolean()),
     name: v.optional(v.string()),
     note: v.optional(v.string()),
     quantity: v.optional(v.string()),
@@ -42,5 +44,12 @@ export const remove = mutation({
   args: { _id: v.id('products') },
   handler: async (ctx, args) => {
     return await ctx.db.delete(args._id);
+  },
+});
+
+export const removeBulk = mutation({
+  args: { ids: v.array(v.id('products')) },
+  handler: async (ctx, args) => {
+    return await Promise.all(args.ids.map(id => ctx.db.delete(id)));
   },
 });

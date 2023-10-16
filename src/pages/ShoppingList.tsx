@@ -9,8 +9,8 @@ import { useMutation, useQuery } from 'convex/react';
 
 import { api } from '../../convex/_generated/api';
 import { Doc } from '../../convex/_generated/dataModel';
-import { EditableList } from '../components/editable-list/List';
 import { HeaderInput } from '../components/HeaderInput';
+import { List } from '../components/List';
 import { ModalEditShopping } from '../components/modals/EditShopping';
 import { ShoppingItem } from '../components/ShoppingItem';
 
@@ -46,12 +46,7 @@ export const ShoppingList: React.FC = () => {
         <HeaderInput placeholder="Ajouter une liste" onAdd={handleCreateItem} />
       </IonHeader>
       <IonContent fullscreen>
-        <EditableList
-          data={data}
-          Item={ShoppingItem}
-          Modal={ModalEditShopping}
-          onEdit={handleUpdateItem}
-        />
+        <List data={data} Item={ShoppingItem} />
       </IonContent>
     </IonPage>
   );

@@ -11,8 +11,8 @@ import { RouteComponentProps } from 'react-router-dom';
 
 import { api } from '../../convex/_generated/api';
 import { Doc } from '../../convex/_generated/dataModel';
-import { EditableList } from '../components/editable-list/List';
 import { HeaderInput } from '../components/HeaderInput';
+import { List } from '../components/List';
 import { ModalEditRecipe } from '../components/modals/EditRecipe';
 import { RecipeItem } from '../components/RecipeItem';
 
@@ -56,12 +56,7 @@ export const RecipeList: React.FC<Props> = () => {
         />
       </IonHeader>
       <IonContent fullscreen>
-        <EditableList
-          data={data}
-          Item={RecipeItem}
-          Modal={ModalEditRecipe}
-          onEdit={handleUpdateRecipe}
-        />
+        <List data={data} Item={RecipeItem} />
       </IonContent>
     </IonPage>
   );
