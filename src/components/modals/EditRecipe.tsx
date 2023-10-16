@@ -32,7 +32,11 @@ export const ModalEditRecipe: React.FC<Props> = ({ item, onDismiss }) => {
   function handleChange(evt: any) {
     const fieldName = evt.target.name as keyof Doc<'recipes'>;
     const value = evt.target.value;
-    setRecipe(prev => ({ ...prev, [fieldName]: value }));
+    const valueAsNumber = parseInt(evt.target.value, 10);
+    setRecipe(prev => ({
+      ...prev,
+      [fieldName]: valueAsNumber ? valueAsNumber : value,
+    }));
   }
 
   function handleKeyUp(evt: React.KeyboardEvent<HTMLIonInputElement>) {
