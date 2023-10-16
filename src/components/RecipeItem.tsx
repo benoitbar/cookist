@@ -56,6 +56,9 @@ export const RecipeItem: React.FC<Props> = ({ item }) => {
     evt.preventDefault();
     evt.stopPropagation();
     presentChoose({
+      async canDismiss(data, role) {
+        return role !== 'gesture';
+      },
       cssClass: 'sheet-modal',
       breakpoints: [0, 1],
       initialBreakpoint: 1,

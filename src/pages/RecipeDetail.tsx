@@ -51,6 +51,9 @@ export const RecipeDetail: React.FC<Props> = ({ match }) => {
 
   function handleAddToList() {
     present({
+      async canDismiss(data, role) {
+        return role !== 'gesture';
+      },
       cssClass: 'sheet-modal',
       breakpoints: [0, 1],
       initialBreakpoint: 1,
