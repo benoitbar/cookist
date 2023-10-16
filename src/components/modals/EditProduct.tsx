@@ -68,6 +68,7 @@ export const ModalEditProduct: React.FC<Props> = ({ item, onDismiss }) => {
       </IonHeader>
       <IonContent class="ion-padding">
         <IonInput
+          autocapitalize="none"
           className="ion-margin-bottom"
           fill="outline"
           label="Nom"
@@ -76,6 +77,8 @@ export const ModalEditProduct: React.FC<Props> = ({ item, onDismiss }) => {
           onIonChange={handleChange}
           onKeyUp={handleKeyUp}
           required
+          // `type="url"` is a workaround to force `autocapitalize="none"` to work
+          type="url"
           value={product.name}
         />
         <IonInput
@@ -90,6 +93,7 @@ export const ModalEditProduct: React.FC<Props> = ({ item, onDismiss }) => {
           value={product.quantity}
         />
         <IonInput
+          autocapitalize="none"
           className="ion-margin-bottom"
           fill="outline"
           label="Note"
@@ -98,6 +102,8 @@ export const ModalEditProduct: React.FC<Props> = ({ item, onDismiss }) => {
           onIonChange={handleChange}
           onKeyUp={handleKeyUp}
           placeholder="Ajouter une note"
+          // `type="url"` is a workaround to force `autocapitalize="none"` to work
+          type="url"
           value={product.note}
         />
         <IonToolbar>

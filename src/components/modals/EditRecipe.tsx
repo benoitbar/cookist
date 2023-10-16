@@ -66,6 +66,7 @@ export const ModalEditRecipe: React.FC<Props> = ({ item, onDismiss }) => {
       </IonHeader>
       <IonContent class="ion-padding">
         <IonInput
+          autocapitalize="none"
           className="ion-margin-bottom"
           fill="outline"
           label="Nom"
@@ -74,6 +75,8 @@ export const ModalEditRecipe: React.FC<Props> = ({ item, onDismiss }) => {
           onIonChange={handleChange}
           onKeyUp={handleKeyUp}
           required
+          // `type="url"` is a workaround to force `autocapitalize="none"` to work
+          type="url"
           value={recipe.name}
         />
         <IonInput
