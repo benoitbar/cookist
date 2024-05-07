@@ -11,7 +11,6 @@ import { api } from '../../convex/_generated/api';
 import { Doc } from '../../convex/_generated/dataModel';
 import { HeaderInput } from '../components/HeaderInput';
 import { List } from '../components/List';
-import { ModalEditShopping } from '../components/modals/EditShopping';
 import { ShoppingItem } from '../components/ShoppingItem';
 
 export const ShoppingList: React.FC = () => {

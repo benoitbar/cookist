@@ -7,24 +7,31 @@ import {
   IonInput,
   IonToolbar,
 } from '@ionic/react';
+import { useMutation } from 'convex/react';
 import { arrowBack, checkmark, trash } from 'ionicons/icons';
 import React from 'react';
 
-import { Doc, Id } from '../../../convex/_generated/dataModel';
+import { api } from '../../../convex/_generated/api';
+import { Doc } from '../../../convex/_generated/dataModel';
 import { KEYS } from '../../utils/keys';
 
 import './modal.css';
 
 interface Props {
   item: Doc<'shopping'>;
-  onDismiss: (data: { _id: Id<'shopping'>; name: string } | void) => void;
+  dismiss: () => void;
 }
 
-export const ModalEditShopping: React.FC<Props> = ({ item, onDismiss }) => {
+export const ModalEditShopping: React.FC<Props> = ({ dismiss, item }) => {
+  const update = useMutation(api.shopping.update);
+  const remove = useMutation(api.shopping.remove);
+
   const [shopping, setShopping] = React.useState<Doc<'shopping'>>(item);
 
-  function save() {
-    onDismiss(shopping);
+  async function save() {
+    const { _creationTime, ...data } = shopping;
+    await update(data);
+    dismiss();
   }
 
   function handleChange(evt: any) {
@@ -43,8 +50,9 @@ export const ModalEditShopping: React.FC<Props> = ({ item, onDismiss }) => {
     save();
   }
 
-  function handleDelete() {
-    onDismiss();
+  async function handleDelete() {
+    await remove({ _id: item._id });
+    dismiss();
   }
 
   return (

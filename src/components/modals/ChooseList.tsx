@@ -2,7 +2,6 @@ import {
   IonButton,
   IonButtons,
   IonCheckbox,
-  IonContent,
   IonHeader,
   IonIcon,
   IonInput,
@@ -24,13 +23,19 @@ import { extractUnit } from '../../utils/quantity';
 
 import './ChooseList.css';
 import './modal.css';
+import { IonReactRouter } from '@ionic/react-router';
 
 interface Props {
-  onDismiss: () => void;
+  dismiss: () => void;
+  history?: IonReactRouter['history'];
   recipe: Doc<'recipes'>;
 }
 
-export const ModalChooseList: React.FC<Props> = ({ onDismiss, recipe }) => {
+export const ModalChooseList: React.FC<Props> = ({
+  dismiss,
+  history,
+  recipe,
+}) => {
   const shoppingList = useQuery(api.shopping.getCollection);
   const productList = useQuery(api.products.getCollection, {
     parent: recipe._id,
@@ -89,8 +94,11 @@ export const ModalChooseList: React.FC<Props> = ({ onDismiss, recipe }) => {
             await create({ ...data, checked: false, parent: item._id });
           })
       );
+      if (history) {
+        history.push('/recipes');
+      }
     }
-    onDismiss();
+    dismiss();
   }
 
   return (
@@ -99,7 +107,7 @@ export const ModalChooseList: React.FC<Props> = ({ onDismiss, recipe }) => {
         <IonToolbar>
           <IonTitle>Ajouter à une liste</IonTitle>
           <IonButtons slot="end">
-            <IonButton color="primary" onClick={onDismiss}>
+            <IonButton color="primary" onClick={dismiss}>
               <IonIcon slot="icon-only" icon={close} />
             </IonButton>
           </IonButtons>

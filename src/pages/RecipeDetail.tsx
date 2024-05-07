@@ -29,7 +29,7 @@ interface Props
     id: string;
   }> {}
 
-export const RecipeDetail: React.FC<Props> = ({ match }) => {
+export const RecipeDetail: React.FC<Props> = ({ history, match }) => {
   const id = match.params.id as Id<'recipes'>;
   const data = useQuery(api.recipes.get, { id });
   const create = useMutation(api.products.create);
@@ -45,7 +45,8 @@ export const RecipeDetail: React.FC<Props> = ({ match }) => {
   }
 
   const [present, dismiss] = useIonModal(ModalChooseList, {
-    onDismiss: () => dismiss(),
+    dismiss: () => dismiss(),
+    history,
     recipe: data,
   });
 

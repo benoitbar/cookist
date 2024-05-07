@@ -13,7 +13,6 @@ import { api } from '../../convex/_generated/api';
 import { Doc } from '../../convex/_generated/dataModel';
 import { HeaderInput } from '../components/HeaderInput';
 import { List } from '../components/List';
-import { ModalEditRecipe } from '../components/modals/EditRecipe';
 import { RecipeItem } from '../components/RecipeItem';
 
 interface Props

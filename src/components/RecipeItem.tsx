@@ -6,11 +6,9 @@ import {
   IonLabel,
   useIonModal,
 } from '@ionic/react';
-import { useMutation } from 'convex/react';
 import { cart } from 'ionicons/icons';
 import React from 'react';
 
-import { api } from '../../convex/_generated/api';
 import { Doc } from '../../convex/_generated/dataModel';
 import { ModalChooseList } from '../components/modals/ChooseList';
 import { ModalEditRecipe } from './modals/EditRecipe';
@@ -20,20 +18,9 @@ interface Props {
 }
 
 export const RecipeItem: React.FC<Props> = ({ item }) => {
-  const update = useMutation(api.recipes.update);
-  const remove = useMutation(api.recipes.remove);
-
   const [presentEdit, dismissEdit] = useIonModal(ModalEditRecipe, {
+    dismiss: () => dismissEdit(),
     item,
-    onDismiss: async (newItem: Doc<'recipes'>) => {
-      if (newItem) {
-        const { _creationTime, ...data } = newItem;
-        await update(data);
-      } else {
-        await remove({ _id: item._id });
-      }
-      dismissEdit();
-    },
   });
 
   function handleContextMenu(evt: React.MouseEvent<HTMLIonItemElement>) {
@@ -47,7 +34,7 @@ export const RecipeItem: React.FC<Props> = ({ item }) => {
   }
 
   const [presentChoose, dismissChoose] = useIonModal(ModalChooseList, {
-    onDismiss: () => dismissChoose(),
+    dismiss: () => dismissChoose(),
     products: [],
     recipe: item,
   });

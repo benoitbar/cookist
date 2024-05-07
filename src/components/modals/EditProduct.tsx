@@ -5,34 +5,33 @@ import {
   IonHeader,
   IonIcon,
   IonInput,
-  IonTextarea,
   IonToolbar,
 } from '@ionic/react';
+import { useMutation } from 'convex/react';
 import { arrowBack, checkmark, trash } from 'ionicons/icons';
 import React from 'react';
 
-import { Doc, Id } from '../../../convex/_generated/dataModel';
+import { api } from '../../../convex/_generated/api';
+import { Doc } from '../../../convex/_generated/dataModel';
 import { KEYS } from '../../utils/keys';
 
 import './modal.css';
 
 interface Props {
+  dismiss: () => void;
   item: Doc<'products'>;
-  onDismiss: (
-    data: {
-      _id: Id<'products'>;
-      name: string;
-      note?: string;
-      quantity: string;
-    } | void
-  ) => void;
 }
 
-export const ModalEditProduct: React.FC<Props> = ({ item, onDismiss }) => {
+export const ModalEditProduct: React.FC<Props> = ({ dismiss, item }) => {
+  const update = useMutation(api.products.update);
+  const remove = useMutation(api.products.remove);
+
   const [product, setProduct] = React.useState<Doc<'products'>>(item);
 
-  function save() {
-    onDismiss(product);
+  async function save() {
+    const { _creationTime, parent, ...data } = product;
+    await update(data);
+    dismiss();
   }
 
   function handleChange(evt: any) {
@@ -51,8 +50,9 @@ export const ModalEditProduct: React.FC<Props> = ({ item, onDismiss }) => {
     save();
   }
 
-  function handleDelete() {
-    onDismiss();
+  async function handleDelete() {
+    await remove({ _id: item._id });
+    dismiss();
   }
 
   return (

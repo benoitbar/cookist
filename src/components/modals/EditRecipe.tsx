@@ -7,26 +7,31 @@ import {
   IonInput,
   IonToolbar,
 } from '@ionic/react';
+import { useMutation } from 'convex/react';
 import { arrowBack, checkmark, trash } from 'ionicons/icons';
 import React from 'react';
 
-import { Doc, Id } from '../../../convex/_generated/dataModel';
+import { api } from '../../../convex/_generated/api';
+import { Doc } from '../../../convex/_generated/dataModel';
 import { KEYS } from '../../utils/keys';
 
 import './modal.css';
 
 interface Props {
+  dismiss: () => void;
   item: Doc<'recipes'>;
-  onDismiss: (
-    data: { _id: Id<'recipes'>; name: string; unit: number } | void
-  ) => void;
 }
 
-export const ModalEditRecipe: React.FC<Props> = ({ item, onDismiss }) => {
+export const ModalEditRecipe: React.FC<Props> = ({ item, dismiss }) => {
+  const update = useMutation(api.recipes.update);
+  const remove = useMutation(api.recipes.remove);
+
   const [recipe, setRecipe] = React.useState<Doc<'recipes'>>(item);
 
-  function save() {
-    onDismiss(recipe);
+  async function save() {
+    const { _creationTime, ...data } = recipe;
+    await update(data);
+    dismiss();
   }
 
   function handleChange(evt: any) {
@@ -49,8 +54,8 @@ export const ModalEditRecipe: React.FC<Props> = ({ item, onDismiss }) => {
     save();
   }
 
-  function handleDelete() {
-    onDismiss();
+  async function handleDelete() {
+    await remove({ _id: item._id });
   }
 
   return (

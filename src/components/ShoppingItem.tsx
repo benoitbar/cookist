@@ -1,9 +1,7 @@
-import { IonItem, IonLabel, IonNote, useIonModal } from '@ionic/react';
+import { IonItem, IonLabel, useIonModal } from '@ionic/react';
 import React from 'react';
 
-import { api } from '../../convex/_generated/api';
 import { Doc } from '../../convex/_generated/dataModel';
-import { useMutation } from 'convex/react';
 import { ModalEditShopping } from './modals/EditShopping';
 
 interface Props {
@@ -11,20 +9,9 @@ interface Props {
 }
 
 export const ShoppingItem: React.FC<Props> = ({ item }) => {
-  const update = useMutation(api.shopping.update);
-  const remove = useMutation(api.shopping.remove);
-
   const [presentEdit, dismissEdit] = useIonModal(ModalEditShopping, {
+    dismiss: () => dismissEdit(),
     item,
-    onDismiss: async (newItem: Doc<'shopping'>) => {
-      if (newItem) {
-        const { _creationTime, ...data } = newItem;
-        await update(data);
-      } else {
-        await remove({ _id: item._id });
-      }
-      dismissEdit();
-    },
   });
 
   function handleContextMenu(evt: React.MouseEvent<HTMLIonItemElement>) {

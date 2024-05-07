@@ -25,22 +25,13 @@ interface Props {
 // Use memo to not render all the list items when checking only one item
 export const ProductItemCheckable: React.FC<Props> = React.memo(({ item }) => {
   const update = useMutation(api.products.update);
-  const remove = useMutation(api.products.remove);
 
   // use a state to avoid delay when checking an item and be optimistic
   const [isChecked, setIsChecked] = React.useState(item.checked);
 
   const [present, dismiss] = useIonModal(ModalEditProduct, {
+    dismiss: () => dismiss(),
     item,
-    onDismiss: async (newItem: Doc<'products'>) => {
-      if (newItem) {
-        const { _creationTime, parent, ...data } = newItem;
-        await update(data);
-      } else {
-        await remove({ _id: item._id });
-      }
-      dismiss();
-    },
   });
 
   function handleContextMenu(evt: React.MouseEvent<HTMLIonItemElement>) {
