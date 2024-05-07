@@ -74,7 +74,7 @@ export const ModalEditShopping: React.FC<Props> = ({ dismiss, item }) => {
           label="Nom"
           labelPlacement="stacked"
           name="name"
-          onIonChange={handleChange}
+          onIonInput={handleChange}
           onKeyUp={handleKeyUp}
           required
           // `type="url"` is a workaround to force `autocapitalize="none"` to work

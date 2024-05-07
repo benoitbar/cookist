@@ -77,7 +77,7 @@ export const ModalEditRecipe: React.FC<Props> = ({ item, dismiss }) => {
           label="Nom"
           labelPlacement="stacked"
           name="name"
-          onIonChange={handleChange}
+          onIonInput={handleChange}
           onKeyUp={handleKeyUp}
           required
           // `type="url"` is a workaround to force `autocapitalize="none"` to work
@@ -91,7 +91,7 @@ export const ModalEditRecipe: React.FC<Props> = ({ item, dismiss }) => {
           labelPlacement="stacked"
           min={1}
           name="unit"
-          onIonChange={handleChange}
+          onIonInput={handleChange}
           onKeyUp={handleKeyUp}
           required
           type="number"

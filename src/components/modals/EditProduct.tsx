@@ -74,7 +74,7 @@ export const ModalEditProduct: React.FC<Props> = ({ dismiss, item }) => {
           label="Nom"
           labelPlacement="stacked"
           name="name"
-          onIonChange={handleChange}
+          onIonInput={handleChange}
           onKeyUp={handleKeyUp}
           required
           // `type="url"` is a workaround to force `autocapitalize="none"` to work
@@ -87,7 +87,7 @@ export const ModalEditProduct: React.FC<Props> = ({ dismiss, item }) => {
           label="Quantité"
           labelPlacement="stacked"
           name="quantity"
-          onIonChange={handleChange}
+          onIonInput={handleChange}
           onKeyUp={handleKeyUp}
           required
           value={product.quantity}
@@ -99,7 +99,7 @@ export const ModalEditProduct: React.FC<Props> = ({ dismiss, item }) => {
           label="Note"
           labelPlacement="stacked"
           name="note"
-          onIonChange={handleChange}
+          onIonInput={handleChange}
           onKeyUp={handleKeyUp}
           placeholder="Ajouter une note"
           // `type="url"` is a workaround to force `autocapitalize="none"` to work
