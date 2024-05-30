@@ -1,15 +1,16 @@
 import { v } from 'convex/values';
 
 import { mutation, query } from './_generated/server';
+import { localeSort } from './utils';
 
 export const getCollection = query({
   args: { parent: v.union(v.id('recipes'), v.id('shopping')) },
   handler: async (ctx, args) => {
-    return await ctx.db
+    const data = await ctx.db
       .query('products')
-      .withIndex('by_name', q => q)
       .filter(q => q.eq(q.field('parent'), args.parent))
       .collect();
+    return localeSort(data);
   },
 });
 

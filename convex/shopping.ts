@@ -1,14 +1,13 @@
 import { v } from 'convex/values';
 
 import { mutation, query } from './_generated/server';
+import { localeSort } from './utils';
 
 export const getCollection = query({
   args: {},
   handler: async ctx => {
-    return await ctx.db
-      .query('shopping')
-      .withIndex('by_name', q => q)
-      .collect();
+    const data = await ctx.db.query('shopping').collect();
+    return localeSort(data);
   },
 });
 
@@ -19,12 +18,16 @@ export const get = query({
       ctx.db.get(args.id),
       ctx.db
         .query('products')
-        .withIndex('by_name', q => q)
         .filter(q => q.eq(q.field('parent'), args.id))
         .collect(),
     ]);
 
-    return response[0] ? { ...response[0], products: response[1] } : null;
+    return response[0]
+      ? {
+          ...response[0],
+          products: localeSort(response[1]),
+        }
+      : null;
   },
 });
 

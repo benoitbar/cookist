@@ -17,6 +17,7 @@ import type {
 import type * as products from "../products.js";
 import type * as recipes from "../recipes.js";
 import type * as shopping from "../shopping.js";
+import type * as utils from "../utils.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   products: typeof products;
   recipes: typeof recipes;
   shopping: typeof shopping;
+  utils: typeof utils;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
