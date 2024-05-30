@@ -42,7 +42,11 @@ const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
       <IonTabs>
-        <IonRouterOutlet>
+        <IonRouterOutlet
+          placeholder={undefined}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        >
           <Route exact path="/shopping" component={ShoppingList} />
           <Route exact path="/shopping/:id" component={ShoppingDetail} />
           <Route exact path="/recipes" component={RecipeList} />
