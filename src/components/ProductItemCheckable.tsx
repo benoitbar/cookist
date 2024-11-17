@@ -1,6 +1,9 @@
 import {
   IonButton,
   IonButtons,
+  IonFab,
+  IonFabButton,
+  IonFabList,
   IonIcon,
   IonItem,
   IonLabel,
@@ -8,8 +11,8 @@ import {
   useIonModal,
 } from '@ionic/react';
 import { useMutation } from 'convex/react';
-import { checkmark, ellipse } from 'ionicons/icons';
-import React from 'react';
+import { add, checkmark, chevronDown, ellipse } from 'ionicons/icons';
+import React, { SyntheticEvent } from 'react';
 import isEqual from 'react-fast-compare';
 
 import { api } from '../../convex/_generated/api';
@@ -28,6 +31,8 @@ export const ProductItemCheckable: React.FC<Props> = React.memo(({ item }) => {
 
   // use a state to avoid delay when checking an item and be optimistic
   const [isChecked, setIsChecked] = React.useState(item.checked);
+
+  const [color, setColor] = React.useState(item.color || 'light');
 
   const [present, dismiss] = useIonModal(ModalEditProduct, {
     dismiss: () => dismiss(),
@@ -49,6 +54,12 @@ export const ProductItemCheckable: React.FC<Props> = React.memo(({ item }) => {
     setIsChecked(prev => {
       return !prev;
     });
+  }
+
+  function handleSetColor(evt: SyntheticEvent<HTMLIonFabButtonElement>) {
+    const color = (evt.target as HTMLIonFabButtonElement).color;
+    setColor(color || 'light')
+    update({ _id: item._id, color });
   }
 
   React.useEffect(() => {
@@ -78,7 +89,18 @@ export const ProductItemCheckable: React.FC<Props> = React.memo(({ item }) => {
         <br />
         <IonNote color="medium">{item.note}</IonNote>
       </IonLabel>
-      <IonNote slot="end">{item.quantity}</IonNote>
+      <IonNote slot='end'>
+        {item.quantity}
+      </IonNote>
+      <IonFab horizontal='end' vertical="center">
+        <IonFabButton size="small" color={color} />
+        <IonFabList side="start">
+          <IonFabButton color="light" onClick={handleSetColor} />
+          <IonFabButton color="success" onClick={handleSetColor} />
+          <IonFabButton color="primary" onClick={handleSetColor} />
+          <IonFabButton color="danger" onClick={handleSetColor} />
+        </IonFabList>
+      </IonFab>
     </IonItem>
   );
 }, isEqual);

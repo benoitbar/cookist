@@ -1,7 +1,7 @@
 import { v } from 'convex/values';
 
 import { mutation, query } from './_generated/server';
-import { localeSort } from './utils';
+import { colorLocaleSort, localeSort } from './utils';
 
 export const getCollection = query({
   args: {},
@@ -24,9 +24,9 @@ export const get = query({
 
     return response[0]
       ? {
-          ...response[0],
-          products: localeSort(response[1]),
-        }
+        ...response[0],
+        products: colorLocaleSort(response[1]),
+      }
       : null;
   },
 });

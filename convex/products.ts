@@ -1,7 +1,7 @@
 import { v } from 'convex/values';
 
 import { mutation, query } from './_generated/server';
-import { localeSort } from './utils';
+import { colorLocaleSort } from './utils';
 
 export const getCollection = query({
   args: { parent: v.union(v.id('recipes'), v.id('shopping')) },
@@ -10,13 +10,14 @@ export const getCollection = query({
       .query('products')
       .filter(q => q.eq(q.field('parent'), args.parent))
       .collect();
-    return localeSort(data);
+    return colorLocaleSort(data);
   },
 });
 
 export const create = mutation({
   args: {
     checked: v.optional(v.boolean()),
+    color: v.optional(v.string()),
     name: v.string(),
     note: v.optional(v.string()),
     parent: v.union(v.id('recipes'), v.id('shopping')),
@@ -31,6 +32,7 @@ export const update = mutation({
   args: {
     _id: v.id('products'),
     checked: v.optional(v.boolean()),
+    color: v.optional(v.string()),
     name: v.optional(v.string()),
     note: v.optional(v.string()),
     quantity: v.optional(v.string()),
