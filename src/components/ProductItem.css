@@ -3,16 +3,13 @@
   margin-right: 4px;
 }
 
-ion-fab {
-  margin-right: 40px;
-}
-
 ion-fab-button {
-  margin-inline: 16px;
-  margin-top: 16px;
-  margin-bottom: 16px;
-  width: 25px;
-  height: 25px;
+  margin-inline: 10px;
+  margin-top: 18px;
+  margin-bottom: 18px;
+  width: 20px;
+  height: 20px;
+  --close-icon-font-size: 18px;
 }
 
 ion-fab-button::part(native) {

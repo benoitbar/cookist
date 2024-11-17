@@ -1,7 +1,20 @@
 import { Doc } from './_generated/dataModel';
 
+function mapColorToPosition(color: string | void) {
+  switch (color) {
+    case 'danger':
+      return 'a'
+    case 'primary':
+      return 'b'
+    case 'success':
+      return 'c'
+    default:
+      return 'z'
+  }
+}
+
 export function colorLocaleSort<T extends Doc<'products'>[]>(data: T, locale: string = 'fr'): T {
-  return data.sort((a, b) => `${a.color || 'z'} ${a.name}`.localeCompare(`${b.color || 'z'} ${b.name}`, locale));
+  return data.sort((a, b) => `${mapColorToPosition(a.color)} ${a.name}`.localeCompare(`${mapColorToPosition(b.color)} ${b.name}`, locale));
 }
 
 
